@@ -1,0 +1,88 @@
+:root {
+    --redCardbgColor: rgb(234, 103, 103);
+    --greenCardbgColor: rgb(69, 148, 69);
+    --blueCardbgColor: rgb(104, 104, 202);
+    --blackCardbgColor: black;
+    --ftColor: rgb(232, 232, 232);
+    width: 100%;
+}
+
+body {
+    background-color: #ffbf97;
+    margin: auto;
+}
+
+h1 {
+    background-color: aliceblue;
+    text-align: center;
+    font-size: 40px;
+}
+
+.path {
+    font-weight: bold;
+    border: var(--ftColor) solid 2px;
+    padding: 2px 5px;
+}
+
+.data {
+    border: var(--ftColor) solid 2px;
+    display: block;
+    max-width: max-content;
+    font-weight: bold;
+    padding: 1px 5px;
+    /* margin-top: 2px; */
+    background-color: rgb(214, 208, 115);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 15px;
+    color: black;
+}
+
+.card {
+    margin: auto;
+    background-color: wheat;
+    box-sizing: border-box;
+    box-shadow: wheat 4px 4px 20px;
+    padding: 15px 20px;
+    width: 60%;
+    min-width: 320px;
+    color: var(--ftColor);
+    font-size: 19px;
+}
+
+.special-card {
+    margin: auto;
+    background-color: rgb(214, 214, 214);
+    box-sizing: border-box;
+    box-shadow: wheat 4px 4px 20px;
+    border: black double 15px;
+    padding: 15px 20px;
+    width: 60%;
+    min-width: 320px;
+    color: black;
+    font-size: 19px;
+}
+
+.card:hover,
+.special-card:hover {
+    opacity: 0.9;
+}
+
+.red-card {
+    box-shadow: var(--redCardbgColor) 4px 4px 20px;
+    background-color: var(--redCardbgColor);
+}
+
+.green-card {
+    box-shadow: var(--greenCardbgColor) 4px 4px 20px;
+    background-color: var(--greenCardbgColor);
+}
+
+.blue-card {
+    box-shadow: var(--blueCardbgColor) 4px 4px 20px;
+    background-color: var(--blueCardbgColor);
+}
+
+.black-card {
+    box-shadow: var(--blackCardbgColor) 4px 4px 20px;
+    background-color: var(--blackCardbgColor);
+}

@@ -1,0 +1,27 @@
+API Stockant des maisons (Sairdaigle, Grifondor...)
+
+API Info [BACK] :
+(Pour chaque maison)
+- Nom : string
+- Points : int
+- Mission (OBJ : {Recompenses:int, success:boolean, timer:date}) [Notes CCTL]
+- Participants (OBJ : {mail, points})
+
+Routes :
+=> Increment de points
+=> Validation de mission
+=> Set les points
+
+
+[FRONT] :
+- Missions 
+- Visu du back
+- Ranking
+
+-------------------------------------------------------------------
+
+Site BDE
+
+Friendly
+Style vitrine
+Page avec tous les liens
