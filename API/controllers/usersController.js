@@ -20,6 +20,20 @@ module.exports = {
         });
     },
 
+    getUserById: function(id) {
+        return new Promise(async(resolve, reject) => {
+            let userList = await module.exports.getUsers();
+
+            let user = undefined;
+
+            if (userList != null) {
+                user = userList.find((user) => user.id == id);
+            }
+
+            resolve(user);
+        });
+    },
+
     addUser: function(newUser) {
         return new Promise(async(resolve, reject) => {
             let users = await module.exports.getUsers(); //On recup

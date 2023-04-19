@@ -7,6 +7,8 @@ const { login, register, getUserProfile, changePassword } = require('./usersAuth
 var cors = require('cors');
 const jwtUtils = require('./utils/jwt.utils');
 const { getTaskLists, getTaskListById, addTaskList, addTaskInTaskList, updateTaskList, updateTaskInTaskList, getTaskInTaskList, deleteTaskList, deleteTaskInTaskList } = require('./controllers/task-listsController');
+const { getHouseList, getHouseById, addPointsByHouseId } = require('./controllers/housesController');
+const { getUserById } = require('./controllers/usersController');
 
 const PORT = 5500;
 
@@ -26,12 +28,26 @@ app.use(cors());
 
 
 function authMid(req, res, next) { //This midleware check the token and share the userId return
+    console.log("Auth mid");
     var headerAuth = req.headers['authorization']; //Get the token
     var userId = jwtUtils.getUserId(headerAuth); //Check if it exist and get the userId
 
     if (userId < 0) return res.status(400).json({ 'error': 'wrong token' });
 
     req.auth = { userId };
+
+    next();
+}
+
+async function adminCheckMid(req, res, next) {
+    console.log("Admin mid");
+    let userId = req.auth.userId;
+
+    let user = await getUserById(userId);
+
+    // console.log(user);
+
+    if (user.isAdmin != 1) return res.status(403).json({ 'error': 'access forbidden' });
 
     next();
 }
@@ -66,6 +82,42 @@ app.put("/api/changePassword", authMid, async(req, res) => {
 
     changePassword(req, res);
 })
+
+/**--------------------------------------------House----------------------------------------------- */
+app.get("/api/houses", async(req, res) => { //[CHECK, ]
+    console.log("GET /api/houses");
+
+    let houseList = await getHouseList();
+
+    return res.status(200).send(houseList);
+})
+
+app.get("/api/house/:id", async(req, res) => { //[CHECK, ]
+    console.log("GET /api/house-list/:id");
+
+    const { id } = req.params;
+
+    let house = await getHouseById(id);
+
+    return res.status(200).send(house);
+})
+
+app.post('/api/house/:id', authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
+    console.log("POST API/task-list");
+
+    const { id } = req.params;
+
+    const { points } = req.body;
+
+    if (points == null) {
+        return res.status(418).send({ message: 'We need all the parameters !' });
+    }
+
+    let newHouse = await addPointsByHouseId(id, points);
+
+    return res.status(201).send(newHouse);
+})
+
 
 /**------------------------------------------------------------------------------------------- */
 

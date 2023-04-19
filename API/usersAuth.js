@@ -127,7 +127,7 @@ module.exports = {
         const userFound = users.find((user) => user.id == userId);
 
         if (userFound) {
-            return res.status(201).send({
+            return res.status(200).send({
                 id: userFound.id,
                 username: userFound.username,
                 isAdmin: userFound.isAdmin
