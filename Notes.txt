@@ -5,7 +5,7 @@ API Info [BACK] :
 - Nom : string
 - Points : int
 - Mission (OBJ : {Recompenses:int, success:boolean, timer:date}) [Notes CCTL]
-- Participants (OBJ : {mail, points})
+(idée) - Participants (OBJ : {mail, points})
 
 Routes :
 => Increment de points

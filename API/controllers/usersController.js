@@ -4,87 +4,51 @@ const USERS_PATH = 'db/users.json';
 //Probleme si DB vide !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module.exports = {
-    getUsers: function() {
+    getUsers: function(bddConnection) {
         return new Promise((resolve, reject) => {
-            fs.readFile(USERS_PATH, function(err, data) {
-                // Check for errors
-                //if (err) throw err;
+            bddConnection.query('SELECT * FROM user', (err, rows) => {
                 if (err) {
-                    console.log(err);
-                    resolve({ error: true });
+                    console.error('Erreur lors de l\'exécution de la requête :', err);
+                    reject();
                 }
-                console.log("Data read");
-
-                resolve(JSON.parse(data));
+                resolve(rows);
             });
         });
     },
 
-    getUserById: function(id) {
+    getUserById: function(bddConnection, id) {
         return new Promise(async(resolve, reject) => {
-            let userList = await module.exports.getUsers();
-
-            let user = undefined;
-
-            if (userList != null) {
-                user = userList.find((user) => user.id == id);
-            }
-
-            resolve(user);
-        });
-    },
-
-    addUser: function(newUser) {
-        return new Promise(async(resolve, reject) => {
-            let users = await module.exports.getUsers(); //On recup
-
-            if (users != null) {
-                let newID = users.sort((a, b) => { //Tri
-                    return a.id - b.id;
-                })[users.length - 1].id + 1;
-
-                let finalUser = {
-                    id: newID,
-                    ...newUser
+            bddConnection.query(`SELECT * FROM user where idUser = ${bddConnection.escape(id)}`, (err, rows) => {
+                if (err) {
+                    console.error('Erreur lors de l\'exécution de la requête :', err);
+                    reject();
                 }
-
-                users.push(finalUser);
-
-                fs.writeFile(USERS_PATH, JSON.stringify(users), err => {
-                    if (err) {
-                        console.log(err);
-                        resolve({ error: true });
-                    }
-
-                    console.log("Done writing"); // Success
-
-                    resolve(finalUser);
-                });
-            }
+                resolve(rows);
+            });
         });
     },
 
-    updateUser: function(updatedUser) {
+    addUser: function(bddConnection, newUser) {
         return new Promise(async(resolve, reject) => {
-            let users = await module.exports.getUsers(); //On recup
+            bddConnection.query(`INSERT INTO user (username, password, admin) VALUES (${bddConnection.escape(newUser.username)}, ${bddConnection.escape(newUser.password)}, ${bddConnection.escape(newUser.admin)})`, (err, rows) => {
+                if (err) {
+                    console.error('Erreur lors de l\'exécution de la requête :', err);
+                    reject();
+                }
+                resolve(rows);
+            });
+        });
+    },
 
-            if (users != null) {
-                users = users.map((user) => {
-                    if (user.id == updatedUser.id) return updatedUser;
-                    return user;
-                });
-
-                fs.writeFile(USERS_PATH, JSON.stringify(users), err => {
-                    if (err) {
-                        console.log(err);
-                        resolve({ error: true });
-                    }
-
-                    console.log("Done writing"); // Success
-
-                    resolve(updatedUser);
-                });
-            }
+    updateUser: function(bddConnection, updatedUser) {
+        return new Promise(async(resolve, reject) => {
+            bddConnection.query(`UPDATE user set password = ${bddConnection.escape(updatedUser.password)} where idUser = ${bddConnection.escape(updatedUser.id)}`, (err, rows) => {
+                if (err) {
+                    console.error('Erreur lors de l\'exécution de la requête :', err);
+                    reject();
+                }
+                resolve();
+            });
         });
     }
 }

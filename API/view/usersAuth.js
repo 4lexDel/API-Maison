@@ -1,6 +1,6 @@
 var bcrypt = require('bcrypt');
-const { getUsers, addUser, updateUser } = require('./controllers/usersController');
-var jwtUtils = require('./utils/jwt.utils');
+const { getUsers, addUser, updateUser } = require('../controllers/usersController');
+var jwtUtils = require('../utils/jwt.utils');
 //var asyncLib  = require('async');
 
 //const EMAIL_REGEX     = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -27,7 +27,7 @@ function isPasswordCorrect(password, cryptedPassword) {
 
 
 module.exports = {
-    register: async(req, res) => {
+    register: async(req, res, bddConnection) => {
         console.log("REGISTER FUNCTION");
 
         // Params
@@ -50,7 +50,7 @@ module.exports = {
         }
 
         //return res.status(201).json({ "Success": "parameters OK !" });
-        let users = await getUsers();
+        let users = await getUsers(bddConnection);
         userFound = users.find((user) => user.username == username);
 
         if (userFound) {
@@ -67,21 +67,23 @@ module.exports = {
         const newUser = {
             username: username,
             password: cryptedPassword,
-            isAdmin: 0
+            admin: 0
         }
 
-        const userAdd = await addUser(newUser);
+        const userAdd = await addUser(bddConnection, newUser);
 
-        if (userAdd) {
-            return res.status(201).send({
-                id: userAdd.id,
-                username: userAdd.username
-            });
-        }
-        return res.status(500).json({ 'error': 'cannot add user' });
+        return res.status(201).send({});
+
+        // if (userAdd) {
+        //     return res.status(201).send({
+        //         userId: userAdd.id,
+        //         username: userAdd.username,
+        //     });
+        // }
+        // return res.status(500).json({ 'error': 'cannot add user' });
     },
 
-    login: async(req, res) => {
+    login: async(req, res, bddConnection) => {
         console.log("LOGIN FUNCTION");
 
         // Params
@@ -94,8 +96,9 @@ module.exports = {
             return res.status(400).json({ 'error': 'missing parameters' });
         }
 
-        let users = await getUsers();
+        let users = await getUsers(bddConnection);
         const userFound = users.find((user) => user.username == username);
+        console.log(userFound);
 
         if (!userFound) {
             return res.status(400).json({ 'error': 'user doesn\'t exist' });
@@ -107,14 +110,16 @@ module.exports = {
             return res.status(403).json({ 'error': 'invalid password' });
         }
         return res.status(201).json({
-            'userId': userFound.id,
+            'username': userFound.username,
+            'idUser': userFound.idUser,
+            'admin': userFound.admin,
             'token': jwtUtils.generateTokenForUser(userFound) //Important
         });
 
         //Erreur 500 de reserve ?????????
     },
 
-    getUserProfile: async(req, res) => {
+    getUserProfile: async(req, res, bddConnection) => {
         // Getting auth header
         var headerAuth = req.headers['authorization'];
         console.log(`TEST TOKEN : ${headerAuth}`);
@@ -123,20 +128,20 @@ module.exports = {
         if (userId < 0)
             return res.status(400).json({ 'error': 'wrong token' });
 
-        let users = await getUsers();
-        const userFound = users.find((user) => user.id == userId);
+        let users = await getUsers(bddConnection);
+        const userFound = users.find((user) => user.idUser == userId);
 
         if (userFound) {
             return res.status(200).send({
-                id: userFound.id,
+                idUser: userFound.idUser,
                 username: userFound.username,
-                isAdmin: userFound.isAdmin
+                admin: userFound.admin
             });
         }
         return res.status(500).json({ 'error': 'user not found' });
     },
 
-    changePassword: async(req, res) => {
+    changePassword: async(req, res, bddConnection) => {
         console.log("UPDATE PASSWORD FUNCTION");
 
         // Params
@@ -156,7 +161,7 @@ module.exports = {
 
         if (password == newPassword) return res.status(400).json({ 'error': 'the new password is the same than the last one' });
 
-        let users = await getUsers();
+        let users = await getUsers(bddConnection);
         const userFound = users.find((user) => user.username == username);
 
         if (!userFound) {
@@ -174,16 +179,16 @@ module.exports = {
 
         console.log(`MDP (clair) : ${newPassword} => MDP (Chiffré) : ${cryptedNewPassword}`);
 
-        updatedUser = {
+        let updatedUser = {
             ...userFound,
             password: cryptedNewPassword
         }
 
-        let userToSend = await updateUser(updatedUser);
+        let userToSend = await updateUser(bddConnection, updatedUser);
 
         if (userToSend != null) {
             return res.status(201).send({
-                id: userToSend.id,
+                idUser: userToSend.idUser,
                 username: userToSend.username
             });
         }

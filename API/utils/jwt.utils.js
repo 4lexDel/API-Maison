@@ -7,8 +7,8 @@ const JWT_SIGN_SECRET = 'azfc450zezyjk4504dsdfjvlz54sernbtlvb245zezcfzad';
 module.exports = {
     generateTokenForUser: function(userData) {
         return jwt.sign({
-                userId: userData.id,
-                isAdmin: userData.isAdmin
+                idUser: userData.idUser,
+                admin: userData.admin
             },
             JWT_SIGN_SECRET, {
                 expiresIn: '1h'
@@ -24,7 +24,7 @@ module.exports = {
             try {
                 var jwtToken = jwt.verify(token, JWT_SIGN_SECRET);
                 if (jwtToken != null)
-                    userId = jwtToken.userId;
+                    userId = jwtToken.idUser;
             } catch (err) {}
         }
         return userId;
