@@ -1,17 +1,18 @@
 const express = require('express');
 const app = express();
 
+const { getDatabaseConnection } = require('./initBDD');
+
 var path = require('path');
-const { login, register, getUserProfile, changePassword } = require('./view/usersAuth');
 
 var cors = require('cors');
 const jwtUtils = require('./utils/jwt.utils');
 
-const { getHouseList, getHouseById, addPointsByHouseId } = require('./controllers/housesController');
-
 const { getUserById } = require('./controllers/usersController');
-const { getDatabaseConnection } = require('./initBDD');
-const { houseList, houseDetail, houseAddPoint } = require('./view/houseView');
+
+const { login, register, getUserProfile, changePassword } = require('./view/usersAuth');
+const { houseList, houseDetail, houseAddPoint, addHouse } = require('./view/houseView');
+const { challengeList, challengeDetail } = require('./view/challengeView');
 
 const BDD_CONNECTOR = getDatabaseConnection(); //MYSQL CONNECTOR
 
@@ -95,24 +96,47 @@ app.get("/api/houses", async(req, res) => { //[CHECK, ]
     houseList(req, res, BDD_CONNECTOR);
 })
 
-app.get("/api/house/:id", async(req, res) => { //[CHECK, ]
-    console.log("GET /api/house-list/:id");
+app.post("/api/houses", authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
+    console.log("POST /api/houses");
+
+    const { title } = req.body;
+    const { score } = req.body;
+    const { description } = req.body;
+
+    addHouse(req, res, BDD_CONNECTOR, title, score, description);
+})
+
+app.get("/api/houses/:id", async(req, res) => { //[CHECK, ]
+    console.log("GET /api/house/:id");
 
     const { id } = req.params;
 
     houseDetail(req, res, BDD_CONNECTOR, id);
 })
 
-app.post('/api/house/:id', authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
-    console.log("POST API/task-list");
+app.post('/api/houses/:id/add-points', authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
+    console.log("POST /api/houses/:id/add-points");
 
     const { id } = req.params;
 
     const { points } = req.body;
 
     houseAddPoint(req, res, BDD_CONNECTOR, id, points);
-    houseDetail(req, res, BDD_CONNECTOR, id);
 })
 
+/**--------------------------------------------Challenge----------------------------------------------- */
+app.get("/api/challenges", async(req, res) => { //[CHECK, ]
+    console.log("GET /api/challenges");
+
+    challengeList(req, res, BDD_CONNECTOR);
+})
+
+app.get("/api/challenges/:id", async(req, res) => { //[CHECK, ]
+    console.log("GET /api/challenges/:id");
+
+    const { id } = req.params;
+
+    challengeDetail(req, res, BDD_CONNECTOR, id);
+})
 
 /**------------------------------------------------------------------------------------------- */

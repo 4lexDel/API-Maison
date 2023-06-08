@@ -1,8 +1,3 @@
-const fs = require('fs');
-const USERS_PATH = 'db/users.json';
-
-//Probleme si DB vide !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 module.exports = {
     getUsers: function(bddConnection) {
         return new Promise((resolve, reject) => {
