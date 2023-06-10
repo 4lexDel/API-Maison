@@ -58,5 +58,20 @@ module.exports = {
                 resolve();
             });
         });
+    },
+
+    updateHouse: function(bddConnection, id, title, score, description) {
+        return new Promise(async(resolve, reject) => {
+            bddConnection.query(`UPDATE house set title = ${bddConnection.escape(title)},
+                                                score = ${bddConnection.escape(score)},
+                                                description = ${bddConnection.escape(description)}
+                                    where idHouse = ${bddConnection.escape(id)}`, (err, rows) => {
+                if (err) {
+                    console.error('Erreur lors de l\'exécution de la requête :', err);
+                    reject();
+                }
+                resolve();
+            });
+        });
     }
 }

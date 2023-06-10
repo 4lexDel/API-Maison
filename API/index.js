@@ -11,8 +11,8 @@ const jwtUtils = require('./utils/jwt.utils');
 const { getUserById } = require('./controllers/usersController');
 
 const { login, register, getUserProfile, changePassword } = require('./view/usersAuth');
-const { houseList, houseDetail, houseAddPoint, addHouse } = require('./view/houseView');
-const { challengeList, challengeDetail } = require('./view/challengeView');
+const { houseList, houseDetail, houseAddPoint, addHouse, updateHouse } = require('./view/houseView');
+const { challengeList, challengeDetail, addChallenge, updateChallenge } = require('./view/challengeView');
 
 const BDD_CONNECTOR = getDatabaseConnection(); //MYSQL CONNECTOR
 
@@ -106,6 +106,18 @@ app.post("/api/houses", authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
     addHouse(req, res, BDD_CONNECTOR, title, score, description);
 })
 
+app.put("/api/houses/:id", authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
+    console.log("PUT /api/houses/:id");
+
+    const { id } = req.params;
+
+    const { title } = req.body;
+    const { score } = req.body;
+    const { description } = req.body;
+
+    updateHouse(req, res, BDD_CONNECTOR, id, title, score, description);
+})
+
 app.get("/api/houses/:id", async(req, res) => { //[CHECK, ]
     console.log("GET /api/house/:id");
 
@@ -137,6 +149,38 @@ app.get("/api/challenges/:id", async(req, res) => { //[CHECK, ]
     const { id } = req.params;
 
     challengeDetail(req, res, BDD_CONNECTOR, id);
+})
+
+//PUT MODIFF DE TOUT
+app.put("/api/challenges/:id", authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
+    console.log("PUT /api/challenges/:id");
+
+    const { id } = req.params;
+
+    const { title } = req.body;
+    const { description } = req.body;
+    const { expiration } = req.body;
+    const { award } = req.body;
+    const { success } = req.body;
+    const { winner } = req.body;
+    const { idHouse } = req.body;
+
+    updateChallenge(req, res, BDD_CONNECTOR, id, title, description, expiration, award, success, winner, idHouse);
+})
+
+//POST CREATE CHALLENGE
+app.post("/api/challenges", authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
+    console.log("POST /api/challenges");
+
+    const { title } = req.body;
+    const { description } = req.body;
+    const { expiration } = req.body;
+    const { award } = req.body;
+    const { success } = req.body;
+    const { winner } = req.body;
+    const { idHouse } = req.body;
+
+    addChallenge(req, res, BDD_CONNECTOR, title, description, expiration, award, success, winner, idHouse);
 })
 
 /**------------------------------------------------------------------------------------------- */

@@ -24,16 +24,53 @@ module.exports = {
         });
     },
 
+    getChallengeByName: function(bddConnection, name) {
+        return new Promise(async(resolve, reject) => {
+            bddConnection.query(`SELECT * FROM challenge where title = ${bddConnection.escape(name)}`, (err, rows) => {
+                if (err) {
+                    console.error('Erreur lors de l\'exécution de la requête :', err);
+                    reject();
+                }
+                resolve(rows);
+            });
+        });
+    },
 
-    // addHouse: function(bddConnection, title, score, description) {
-    //     return new Promise(async(resolve, reject) => {
-    //         bddConnection.query(`INSERT into house (title, score, description) VALUES(${bddConnection.escape(title)}, ${bddConnection.escape(score)}, ${bddConnection.escape(description)})`, (err, rows) => {
-    //             if (err) {
-    //                 console.error('Erreur lors de l\'exécution de la requête :', err);
-    //                 reject();
-    //             }
-    //             resolve();
-    //         });
-    //     });
-    // }
+    updateChallenge: function(bddConnection, id, title, description, expiration, award, success, winner, idHouse) {
+        return new Promise(async(resolve, reject) => {
+            bddConnection.query(`UPDATE challenge set title = ${bddConnection.escape(title)},
+                                                  description = ${bddConnection.escape(description)},
+                                                  expiration = ${bddConnection.escape(expiration)},
+                                                  award = ${bddConnection.escape(award)},
+                                                  success = ${bddConnection.escape(success)},
+                                                  winner = ${bddConnection.escape(winner)},
+                                                  idHouse = ${bddConnection.escape(idHouse)} 
+                                    where idChallenge = ${bddConnection.escape(id)}`, (err, rows) => {
+                if (err) {
+                    console.error('Erreur lors de l\'exécution de la requête :', err);
+                    reject();
+                }
+                resolve(rows);
+            });
+        });
+    },
+
+    addChallenge: function(bddConnection, title, description, expiration, award, success, winner, idHouse) {
+        return new Promise(async(resolve, reject) => {
+            bddConnection.query(`INSERT into challenge (title, description, expiration, award, success, winner, idHouse) 
+                                VALUES(${bddConnection.escape(title)}, 
+                                        ${bddConnection.escape(description)},
+                                        ${bddConnection.escape(expiration)}, 
+                                        ${bddConnection.escape(award)}, 
+                                        ${bddConnection.escape(success)}, 
+                                        ${bddConnection.escape(winner)}, 
+                                        ${bddConnection.escape(idHouse)})`, (err, rows) => {
+                if (err) {
+                    console.error('Erreur lors de l\'exécution de la requête :', err);
+                    reject();
+                }
+                resolve(rows);
+            });
+        });
+    },
 }
