@@ -25,3 +25,7 @@ Site BDE
 Friendly
 Style vitrine
 Page avec tous les liens
+
+
+-------------------------------------------------------------------------
+Ajout de POO = plus clean

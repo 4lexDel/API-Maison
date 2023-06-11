@@ -23,13 +23,13 @@ module.exports = {
         }
     },
 
-    addChallenge: async function(req, res, bddConnection, title, description, expiration, award, success, winner, idHouse) {
+    addChallenge: async function(req, res, bddConnection, title, description, expiration, award, success) {
         if (!title || !description) {
             return res.status(418).send({ message: 'We need all the required parameters !' });
         }
 
         try {
-            await addChallenge(bddConnection, title, description, expiration, award, success, winner, idHouse);
+            await addChallenge(bddConnection, title, description, expiration, award, success);
 
             let newChallenge = await getChallengeByName(bddConnection, title);
             return res.status(201).send(newChallenge[0]);
@@ -39,13 +39,13 @@ module.exports = {
         }
     },
 
-    updateChallenge: async function(req, res, bddConnection, id, title, description, expiration, award, success, winner, idHouse) {
+    updateChallenge: async function(req, res, bddConnection, id, title, description, expiration, award, success) {
         if (!title || !description) {
             return res.status(418).send({ message: 'We need all the required parameters !' });
         }
 
         try {
-            await updateChallenge(bddConnection, id, title, description, expiration, award, success, winner, idHouse);
+            await updateChallenge(bddConnection, id, title, description, expiration, award, success);
             let newChallenge = await getChallengeById(bddConnection, id);
 
             return res.status(200).send(newChallenge[0]);

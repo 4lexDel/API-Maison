@@ -13,6 +13,7 @@ const { getUserById } = require('./controllers/usersController');
 const { login, register, getUserProfile, changePassword } = require('./view/usersAuth');
 const { houseList, houseDetail, houseAddPoint, addHouse, updateHouse } = require('./view/houseView');
 const { challengeList, challengeDetail, addChallenge, updateChallenge } = require('./view/challengeView');
+const { proofList, proofDetail, updateProof, addProof } = require('./view/proofView');
 
 const BDD_CONNECTOR = getDatabaseConnection(); //MYSQL CONNECTOR
 
@@ -61,7 +62,7 @@ async function adminCheckMid(req, res, next) {
 
 app.get('/', (req, res) => {
     res.sendFile(`${__dirname}/public/`);
-})
+});
 
 /** -------------------------------Authentification------------------------------------------ */
 
@@ -69,34 +70,34 @@ app.post("/api/register", async(req, res) => {
     console.log("POST /api/register");
 
     register(req, res, BDD_CONNECTOR);
-})
+});
 
 app.post("/api/login", async(req, res) => {
     console.log("POST /api/login");
 
     login(req, res, BDD_CONNECTOR);
-})
+});
 
 app.get("/api/test", async(req, res) => {
     console.log("TEST /api/test");
 
     getUserProfile(req, res, BDD_CONNECTOR);
-})
+});
 
 app.put("/api/changePassword", authMid, async(req, res) => {
     console.log("Change password /api/changePassword");
 
     changePassword(req, res, BDD_CONNECTOR);
-})
+});
 
 /**--------------------------------------------House----------------------------------------------- */
-app.get("/api/houses", async(req, res) => { //[CHECK, ]
+app.get("/api/houses", async(req, res) => {
     console.log("GET /api/houses");
 
     houseList(req, res, BDD_CONNECTOR);
-})
+});
 
-app.post("/api/houses", authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
+app.post("/api/houses", authMid, adminCheckMid, async(req, res) => {
     console.log("POST /api/houses");
 
     const { title } = req.body;
@@ -104,9 +105,9 @@ app.post("/api/houses", authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
     const { description } = req.body;
 
     addHouse(req, res, BDD_CONNECTOR, title, score, description);
-})
+});
 
-app.put("/api/houses/:id", authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
+app.put("/api/houses/:id", authMid, adminCheckMid, async(req, res) => {
     console.log("PUT /api/houses/:id");
 
     const { id } = req.params;
@@ -116,17 +117,17 @@ app.put("/api/houses/:id", authMid, adminCheckMid, async(req, res) => { //[CHECK
     const { description } = req.body;
 
     updateHouse(req, res, BDD_CONNECTOR, id, title, score, description);
-})
+});
 
-app.get("/api/houses/:id", async(req, res) => { //[CHECK, ]
+app.get("/api/houses/:id", async(req, res) => {
     console.log("GET /api/house/:id");
 
     const { id } = req.params;
 
     houseDetail(req, res, BDD_CONNECTOR, id);
-})
+});
 
-app.post('/api/houses/:id/add-points', authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
+app.post('/api/houses/:id/add-points', authMid, adminCheckMid, async(req, res) => {
     console.log("POST /api/houses/:id/add-points");
 
     const { id } = req.params;
@@ -134,25 +135,36 @@ app.post('/api/houses/:id/add-points', authMid, adminCheckMid, async(req, res) =
     const { points } = req.body;
 
     houseAddPoint(req, res, BDD_CONNECTOR, id, points);
-})
+});
 
 /**--------------------------------------------Challenge----------------------------------------------- */
-app.get("/api/challenges", async(req, res) => { //[CHECK, ]
+app.get("/api/challenges", async(req, res) => {
     console.log("GET /api/challenges");
 
     challengeList(req, res, BDD_CONNECTOR);
-})
+});
 
-app.get("/api/challenges/:id", async(req, res) => { //[CHECK, ]
+app.get("/api/challenges/:id", async(req, res) => {
     console.log("GET /api/challenges/:id");
 
     const { id } = req.params;
 
     challengeDetail(req, res, BDD_CONNECTOR, id);
-})
+});
 
-//PUT MODIFF DE TOUT
-app.put("/api/challenges/:id", authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
+app.post("/api/challenges", authMid, adminCheckMid, async(req, res) => {
+    console.log("POST /api/challenges");
+
+    const { title } = req.body;
+    const { description } = req.body;
+    const { expiration } = req.body;
+    const { award } = req.body;
+    const { success } = req.body;
+
+    addChallenge(req, res, BDD_CONNECTOR, title, description, expiration, award, success);
+});
+
+app.put("/api/challenges/:id", authMid, adminCheckMid, async(req, res) => {
     console.log("PUT /api/challenges/:id");
 
     const { id } = req.params;
@@ -162,25 +174,52 @@ app.put("/api/challenges/:id", authMid, adminCheckMid, async(req, res) => { //[C
     const { expiration } = req.body;
     const { award } = req.body;
     const { success } = req.body;
-    const { winner } = req.body;
+
+    updateChallenge(req, res, BDD_CONNECTOR, id, title, description, expiration, award, success);
+});
+
+/**--------------------------------------------proof----------------------------------------------- */
+app.get("/api/proofs", authMid, adminCheckMid, async(req, res) => {
+    console.log("GET /api/proofs");
+
+    proofList(req, res, BDD_CONNECTOR);
+});
+
+app.get("/api/proofs/:id", authMid, adminCheckMid, async(req, res) => {
+    console.log("GET /api/proofs/:id");
+
+    const { id } = req.params;
+
+    proofDetail(req, res, BDD_CONNECTOR, id);
+});
+
+app.post("/api/proofs", authMid, adminCheckMid, async(req, res) => {
+    console.log("POST /api/proofs");
+
+    const { dateProof } = req.body;
+    const { proofImg } = req.body;
+    const { proofDescription } = req.body;
+    const { accepted } = req.body;
+    const { challengerName } = req.body;
     const { idHouse } = req.body;
+    const { idChallenge } = req.body;
 
-    updateChallenge(req, res, BDD_CONNECTOR, id, title, description, expiration, award, success, winner, idHouse);
-})
+    addProof(req, res, BDD_CONNECTOR, dateProof, proofImg, proofDescription, accepted, challengerName, idHouse, idChallenge);
+});
 
-//POST CREATE CHALLENGE
-app.post("/api/challenges", authMid, adminCheckMid, async(req, res) => { //[CHECK, ]
-    console.log("POST /api/challenges");
+app.put("/api/proofs/:id", authMid, adminCheckMid, async(req, res) => {
+    console.log("PUT /api/proofs/:id");
 
-    const { title } = req.body;
-    const { description } = req.body;
-    const { expiration } = req.body;
-    const { award } = req.body;
-    const { success } = req.body;
-    const { winner } = req.body;
+    const { id } = req.params;
+
+    const { dateProof } = req.body;
+    const { proofImg } = req.body;
+    const { proofDescription } = req.body;
+    const { accepted } = req.body;
+    const { challengerName } = req.body;
     const { idHouse } = req.body;
+    const { idChallenge } = req.body;
 
-    addChallenge(req, res, BDD_CONNECTOR, title, description, expiration, award, success, winner, idHouse);
-})
-
+    updateProof(req, res, BDD_CONNECTOR, id, dateProof, proofImg, proofDescription, accepted, challengerName, idHouse, idChallenge);
+});
 /**------------------------------------------------------------------------------------------- */
