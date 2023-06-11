@@ -38,9 +38,9 @@ module.exports = {
 
     addProof: function(bddConnection, dateProof, proofImg, proofDescription, accepted, challengerName, idHouse, idChallenge) {
         return new Promise(async(resolve, reject) => {
-            bddConnection.query(`INSERT into proof (dateProof, proofImg, proofDescription, accepted, challengerName, idHouse, idChallenge) 
-                            VALUES(${bddConnection.escape(dateProof)}, 
-                            ${bddConnection.escape(proofImg)}, 
+            bddConnection.query(`INSERT into proof (proofImg, dateProof, proofDescription, accepted, challengerName, idHouse, idChallenge) 
+                            VALUES(${bddConnection.escape(proofImg)}, 
+                            ${bddConnection.escape(dateProof)}, 
                             ${bddConnection.escape(proofDescription)}, 
                             ${bddConnection.escape(accepted)}, 
                             ${bddConnection.escape(challengerName)}, 
@@ -65,6 +65,18 @@ module.exports = {
                                                 idHouse = ${bddConnection.escape(idHouse)},
                                                 idChallenge = ${bddConnection.escape(idChallenge)}
                                     where idProof = ${bddConnection.escape(id)}`, (err, rows) => {
+                if (err) {
+                    console.error('Erreur lors de l\'exécution de la requête :', err);
+                    reject();
+                }
+                resolve();
+            });
+        });
+    },
+
+    removeProofById: function(bddConnection, id) {
+        return new Promise(async(resolve, reject) => {
+            bddConnection.query(`delete from proof where idProof = ${bddConnection.escape(id)}`, (err, rows) => {
                 if (err) {
                     console.error('Erreur lors de l\'exécution de la requête :', err);
                     reject();

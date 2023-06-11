@@ -192,5 +192,16 @@ module.exports = {
                 username: userToSend.username
             });
         }
-    }
+    },
+
+    // deleteUser: async function(req, res, bddConnection, id) {
+    //     try {
+    //         await removeProofById(bddConnection, id);
+
+    //         return res.status(202).send({ message: 'Content successfully deleted !' });
+    //     } catch (error) {
+    //         console.log(error);
+    //         return res.status(500).send({ message: 'Internal error !' });
+    //     }
+    // },
 }

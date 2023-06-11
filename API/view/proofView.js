@@ -1,4 +1,4 @@
-const { getProofList, getProofById, addProof, updateProof } = require("../controllers/proofsController");
+const { getProofList, getProofById, addProof, updateProof, removeProofById } = require("../controllers/proofsController");
 
 module.exports = {
     proofList: async function(req, res, bddConnection) {
@@ -12,7 +12,9 @@ module.exports = {
         }
     },
 
-    proofDetail: async function(req, res, bddConnection, id) {
+    proofDetail: async function(req, res, bddConnection) {
+        const { id } = req.params;
+
         try {
             let proof = await getProofById(bddConnection, id);
 
@@ -23,7 +25,15 @@ module.exports = {
         }
     },
 
-    addProof: async function(req, res, bddConnection, dateProof, proofImg, proofDescription, accepted, challengerName, idHouse, idChallenge) {
+    addProof: async function(req, res, bddConnection) {
+        const { dateProof } = req.body;
+        const { proofImg } = req.body;
+        const { proofDescription } = req.body;
+        const { accepted } = req.body;
+        const { challengerName } = req.body;
+        const { idHouse } = req.body;
+        const { idChallenge } = req.body;
+
         if (!dateProof || !challengerName || (!idHouse && idHouse != 0) || (!idChallenge && idChallenge != 0)) {
             return res.status(418).send({ message: 'We need all the parameters !' });
         }
@@ -32,7 +42,7 @@ module.exports = {
             await addProof(bddConnection, dateProof, proofImg, proofDescription, accepted, challengerName, idHouse, idChallenge);
             //let newProof = await getHouseByName(bddConnection, title);/////////////////////////////////////////////
 
-            return res.status(201).send({ message: 'Proof successfully add !' });
+            return res.status(201).send({ message: 'Proof successfully added !' });
             // return res.status(201).send(newHouse[0]);
         } catch (error) {
             console.log(error);
@@ -40,7 +50,17 @@ module.exports = {
         }
     },
 
-    updateProof: async function(req, res, bddConnection, id, dateProof, proofImg, proofDescription, accepted, challengerName, idHouse, idChallenge) {
+    updateProof: async function(req, res, bddConnection) {
+        const { id } = req.params;
+
+        const { dateProof } = req.body;
+        const { proofImg } = req.body;
+        const { proofDescription } = req.body;
+        const { accepted } = req.body;
+        const { challengerName } = req.body;
+        const { idHouse } = req.body;
+        const { idChallenge } = req.body;
+
         if (!dateProof || !challengerName || (!idHouse && idHouse != 0) || (!idChallenge && idChallenge != 0)) {
             return res.status(418).send({ message: 'We need all the parameters !' });
         }
@@ -50,6 +70,19 @@ module.exports = {
             let newProof = await getProofById(bddConnection, id);
 
             return res.status(200).send(newProof[0]);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Internal error !' });
+        }
+    },
+
+    deleteProof: async function(req, res, bddConnection) {
+        const { id } = req.params;
+
+        try {
+            await removeProofById(bddConnection, id);
+
+            return res.status(202).send({ message: 'Content successfully deleted !' });
         } catch (error) {
             console.log(error);
             return res.status(500).send({ message: 'Internal error !' });

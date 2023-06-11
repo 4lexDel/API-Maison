@@ -11,9 +11,9 @@ const jwtUtils = require('./utils/jwt.utils');
 const { getUserById } = require('./controllers/usersController');
 
 const { login, register, getUserProfile, changePassword } = require('./view/usersAuth');
-const { houseList, houseDetail, houseAddPoint, addHouse, updateHouse } = require('./view/houseView');
-const { challengeList, challengeDetail, addChallenge, updateChallenge } = require('./view/challengeView');
-const { proofList, proofDetail, updateProof, addProof } = require('./view/proofView');
+const { houseList, houseDetail, houseAddPoint, addHouse, updateHouse, deleteHouse } = require('./view/houseView');
+const { challengeList, challengeDetail, addChallenge, updateChallenge, deleteChallenge } = require('./view/challengeView');
+const { proofList, proofDetail, updateProof, addProof, deleteProof } = require('./view/proofView');
 
 const BDD_CONNECTOR = getDatabaseConnection(); //MYSQL CONNECTOR
 
@@ -100,41 +100,31 @@ app.get("/api/houses", async(req, res) => {
 app.post("/api/houses", authMid, adminCheckMid, async(req, res) => {
     console.log("POST /api/houses");
 
-    const { title } = req.body;
-    const { score } = req.body;
-    const { description } = req.body;
-
-    addHouse(req, res, BDD_CONNECTOR, title, score, description);
+    addHouse(req, res, BDD_CONNECTOR);
 });
 
 app.put("/api/houses/:id", authMid, adminCheckMid, async(req, res) => {
     console.log("PUT /api/houses/:id");
 
-    const { id } = req.params;
-
-    const { title } = req.body;
-    const { score } = req.body;
-    const { description } = req.body;
-
-    updateHouse(req, res, BDD_CONNECTOR, id, title, score, description);
+    updateHouse(req, res, BDD_CONNECTOR);
 });
 
 app.get("/api/houses/:id", async(req, res) => {
     console.log("GET /api/house/:id");
 
-    const { id } = req.params;
-
-    houseDetail(req, res, BDD_CONNECTOR, id);
+    houseDetail(req, res, BDD_CONNECTOR);
 });
 
 app.post('/api/houses/:id/add-points', authMid, adminCheckMid, async(req, res) => {
     console.log("POST /api/houses/:id/add-points");
 
-    const { id } = req.params;
+    houseAddPoint(req, res, BDD_CONNECTOR);
+});
 
-    const { points } = req.body;
+app.delete("/api/houses/:id", authMid, adminCheckMid, async(req, res) => {
+    console.log("DELETE /api/houses/:id");
 
-    houseAddPoint(req, res, BDD_CONNECTOR, id, points);
+    deleteHouse(req, res, BDD_CONNECTOR);
 });
 
 /**--------------------------------------------Challenge----------------------------------------------- */
@@ -147,35 +137,25 @@ app.get("/api/challenges", async(req, res) => {
 app.get("/api/challenges/:id", async(req, res) => {
     console.log("GET /api/challenges/:id");
 
-    const { id } = req.params;
-
-    challengeDetail(req, res, BDD_CONNECTOR, id);
+    challengeDetail(req, res, BDD_CONNECTOR);
 });
 
 app.post("/api/challenges", authMid, adminCheckMid, async(req, res) => {
     console.log("POST /api/challenges");
 
-    const { title } = req.body;
-    const { description } = req.body;
-    const { expiration } = req.body;
-    const { award } = req.body;
-    const { success } = req.body;
-
-    addChallenge(req, res, BDD_CONNECTOR, title, description, expiration, award, success);
+    addChallenge(req, res, BDD_CONNECTOR);
 });
 
 app.put("/api/challenges/:id", authMid, adminCheckMid, async(req, res) => {
     console.log("PUT /api/challenges/:id");
 
-    const { id } = req.params;
+    updateChallenge(req, res, BDD_CONNECTOR);
+});
 
-    const { title } = req.body;
-    const { description } = req.body;
-    const { expiration } = req.body;
-    const { award } = req.body;
-    const { success } = req.body;
+app.delete("/api/challenges/:id", authMid, adminCheckMid, async(req, res) => {
+    console.log("DELETE /api/challenges/:id");
 
-    updateChallenge(req, res, BDD_CONNECTOR, id, title, description, expiration, award, success);
+    deleteChallenge(req, res, BDD_CONNECTOR);
 });
 
 /**--------------------------------------------proof----------------------------------------------- */
@@ -188,38 +168,24 @@ app.get("/api/proofs", authMid, adminCheckMid, async(req, res) => {
 app.get("/api/proofs/:id", authMid, adminCheckMid, async(req, res) => {
     console.log("GET /api/proofs/:id");
 
-    const { id } = req.params;
-
-    proofDetail(req, res, BDD_CONNECTOR, id);
+    proofDetail(req, res, BDD_CONNECTOR);
 });
 
 app.post("/api/proofs", authMid, adminCheckMid, async(req, res) => {
     console.log("POST /api/proofs");
 
-    const { dateProof } = req.body;
-    const { proofImg } = req.body;
-    const { proofDescription } = req.body;
-    const { accepted } = req.body;
-    const { challengerName } = req.body;
-    const { idHouse } = req.body;
-    const { idChallenge } = req.body;
-
-    addProof(req, res, BDD_CONNECTOR, dateProof, proofImg, proofDescription, accepted, challengerName, idHouse, idChallenge);
+    addProof(req, res, BDD_CONNECTOR);
 });
 
 app.put("/api/proofs/:id", authMid, adminCheckMid, async(req, res) => {
     console.log("PUT /api/proofs/:id");
 
-    const { id } = req.params;
+    updateProof(req, res, BDD_CONNECTOR);
+});
 
-    const { dateProof } = req.body;
-    const { proofImg } = req.body;
-    const { proofDescription } = req.body;
-    const { accepted } = req.body;
-    const { challengerName } = req.body;
-    const { idHouse } = req.body;
-    const { idChallenge } = req.body;
+app.delete("/api/proofs/:id", authMid, adminCheckMid, async(req, res) => {
+    console.log("DELETE /api/proofs/:id");
 
-    updateProof(req, res, BDD_CONNECTOR, id, dateProof, proofImg, proofDescription, accepted, challengerName, idHouse, idChallenge);
+    deleteProof(req, res, BDD_CONNECTOR);
 });
 /**------------------------------------------------------------------------------------------- */

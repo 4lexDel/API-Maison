@@ -1,4 +1,4 @@
-const { getHouseList, getHouseById, addPointsByHouseId, getHouseByName, addHouse, updateHouse } = require("../controllers/housesController");
+const { getHouseList, getHouseById, addPointsByHouseId, getHouseByName, addHouse, updateHouse, removeHouseById } = require("../controllers/housesController");
 
 module.exports = {
     houseList: async function(req, res, bddConnection) {
@@ -12,7 +12,9 @@ module.exports = {
         }
     },
 
-    houseDetail: async function(req, res, bddConnection, id) {
+    houseDetail: async function(req, res, bddConnection) {
+        const { id } = req.params;
+
         try {
             let house = await getHouseById(bddConnection, id);
 
@@ -24,7 +26,11 @@ module.exports = {
 
     },
 
-    houseAddPoint: async function(req, res, bddConnection, id, points) {
+    houseAddPoint: async function(req, res, bddConnection) {
+        const { id } = req.params;
+
+        const { points } = req.body;
+
         if (points == null) {
             return res.status(418).send({ message: 'We need all the parameters !' });
         }
@@ -39,7 +45,11 @@ module.exports = {
         }
     },
 
-    addHouse: async function(req, res, bddConnection, title, score, description) {
+    addHouse: async function(req, res, bddConnection) {
+        const { title } = req.body;
+        const { score } = req.body;
+        const { description } = req.body;
+
         if (!title || (!score && score != 0) || !description) {
             return res.status(418).send({ message: 'We need all the parameters !' });
         }
@@ -55,7 +65,13 @@ module.exports = {
         }
     },
 
-    updateHouse: async function(req, res, bddConnection, id, title, score, description) {
+    updateHouse: async function(req, res, bddConnection) {
+        const { id } = req.params;
+
+        const { title } = req.body;
+        const { score } = req.body;
+        const { description } = req.body;
+
         if (!title || (!score && score != 0) || !description) {
             return res.status(418).send({ message: 'We need all the parameters !' });
         }
@@ -65,6 +81,19 @@ module.exports = {
             let newHouse = await getHouseById(bddConnection, id);
 
             return res.status(200).send(newHouse[0]);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Internal error !' });
+        }
+    },
+
+    deleteHouse: async function(req, res, bddConnection) {
+        const { id } = req.params;
+
+        try {
+            await removeHouseById(bddConnection, id);
+
+            return res.status(202).send({ message: 'Content successfully deleted !' });
         } catch (error) {
             console.log(error);
             return res.status(500).send({ message: 'Internal error !' });

@@ -73,5 +73,17 @@ module.exports = {
                 resolve();
             });
         });
+    },
+
+    removeHouseById: function(bddConnection, id) {
+        return new Promise(async(resolve, reject) => {
+            bddConnection.query(`delete from house where idHouse = ${bddConnection.escape(id)}`, (err, rows) => {
+                if (err) {
+                    console.error('Erreur lors de l\'exécution de la requête :', err);
+                    reject();
+                }
+                resolve();
+            });
+        });
     }
 }

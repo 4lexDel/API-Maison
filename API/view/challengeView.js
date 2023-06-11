@@ -1,4 +1,4 @@
-const { getChallengeList, getChallengeById, addChallenge, getChallengeByName, updateChallenge } = require("../controllers/challengesController");
+const { getChallengeList, getChallengeById, addChallenge, getChallengeByName, updateChallenge, removeChallengeById } = require("../controllers/challengesController");
 
 module.exports = {
     challengeList: async function(req, res, bddConnection) {
@@ -12,7 +12,9 @@ module.exports = {
         }
     },
 
-    challengeDetail: async function(req, res, bddConnection, id) {
+    challengeDetail: async function(req, res, bddConnection) {
+        const { id } = req.params;
+
         try {
             let challenge = await getChallengeById(bddConnection, id);
 
@@ -23,7 +25,13 @@ module.exports = {
         }
     },
 
-    addChallenge: async function(req, res, bddConnection, title, description, expiration, award, success) {
+    addChallenge: async function(req, res, bddConnection, ) {
+        const { title } = req.body;
+        const { description } = req.body;
+        const { expiration } = req.body;
+        const { award } = req.body;
+        const { success } = req.body;
+
         if (!title || !description) {
             return res.status(418).send({ message: 'We need all the required parameters !' });
         }
@@ -39,7 +47,15 @@ module.exports = {
         }
     },
 
-    updateChallenge: async function(req, res, bddConnection, id, title, description, expiration, award, success) {
+    updateChallenge: async function(req, res, bddConnection) {
+        const { id } = req.params;
+
+        const { title } = req.body;
+        const { description } = req.body;
+        const { expiration } = req.body;
+        const { award } = req.body;
+        const { success } = req.body;
+
         if (!title || !description) {
             return res.status(418).send({ message: 'We need all the required parameters !' });
         }
@@ -49,6 +65,19 @@ module.exports = {
             let newChallenge = await getChallengeById(bddConnection, id);
 
             return res.status(200).send(newChallenge[0]);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Internal error !' });
+        }
+    },
+
+    deleteChallenge: async function(req, res, bddConnection) {
+        const { id } = req.params;
+
+        try {
+            await removeChallengeById(bddConnection, id);
+
+            return res.status(202).send({ message: 'Content successfully deleted !' });
         } catch (error) {
             console.log(error);
             return res.status(500).send({ message: 'Internal error !' });

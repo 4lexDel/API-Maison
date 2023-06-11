@@ -45,5 +45,17 @@ module.exports = {
                 resolve();
             });
         });
+    },
+
+    removeUserById: function(bddConnection, id) {
+        return new Promise(async(resolve, reject) => {
+            bddConnection.query(`delete from user where idUser = ${bddConnection.escape(id)}`, (err, rows) => {
+                if (err) {
+                    console.error('Erreur lors de l\'exécution de la requête :', err);
+                    reject();
+                }
+                resolve();
+            });
+        });
     }
 }
