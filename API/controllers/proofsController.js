@@ -36,12 +36,12 @@ module.exports = {
     //     });
     // },
 
-    addProof: function(bddConnection, dateProof, proofImg, proofDescription, accepted, challengerName, idHouse, idChallenge) {
+    addProof: function(bddConnection, dateProof, proofImg, description, accepted, challengerName, idHouse, idChallenge) {
         return new Promise(async(resolve, reject) => {
-            bddConnection.query(`INSERT into proof (proofImg, dateProof, proofDescription, accepted, challengerName, idHouse, idChallenge) 
+            bddConnection.query(`INSERT into proof (proofImg, dateProof, description, accepted, challengerName, idHouse, idChallenge) 
                             VALUES(${bddConnection.escape(proofImg)}, 
                             ${bddConnection.escape(dateProof)}, 
-                            ${bddConnection.escape(proofDescription)}, 
+                            ${bddConnection.escape(description)}, 
                             ${bddConnection.escape(accepted)}, 
                             ${bddConnection.escape(challengerName)}, 
                             ${bddConnection.escape(idHouse)}, 
@@ -55,11 +55,11 @@ module.exports = {
         });
     },
 
-    updateProof: function(bddConnection, id, dateProof, proofImg, proofDescription, accepted, challengerName, idHouse, idChallenge) {
+    updateProof: function(bddConnection, id, dateProof, proofImg, description, accepted, challengerName, idHouse, idChallenge) {
         return new Promise(async(resolve, reject) => {
             bddConnection.query(`UPDATE proof set dateProof = ${bddConnection.escape(dateProof)},
                                                 proofImg = ${bddConnection.escape(proofImg)},
-                                                proofDescription = ${bddConnection.escape(proofDescription)},
+                                                description = ${bddConnection.escape(description)},
                                                 accepted = ${bddConnection.escape(accepted)},
                                                 challengerName = ${bddConnection.escape(challengerName)},
                                                 idHouse = ${bddConnection.escape(idHouse)},

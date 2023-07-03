@@ -1,3 +1,5 @@
+const { DateTime } = require('luxon');
+
 const { getProofList, getProofById, addProof, updateProof, removeProofById } = require("../controllers/proofsController");
 
 module.exports = {
@@ -26,10 +28,13 @@ module.exports = {
     },
 
     addProof: async function(req, res, bddConnection) {
-        const { dateProof } = req.body;
+        let todayDate = DateTime.local();
+
+        const dateProof = todayDate.toFormat('dd/MM/yyyy HH:mm');
+        const accepted = 0;
+
         const { proofImg } = req.body;
-        const { proofDescription } = req.body;
-        const { accepted } = req.body;
+        const { description } = req.body;
         const { challengerName } = req.body;
         const { idHouse } = req.body;
         const { idChallenge } = req.body;
@@ -39,7 +44,7 @@ module.exports = {
         }
 
         try {
-            await addProof(bddConnection, dateProof, proofImg, proofDescription, accepted, challengerName, idHouse, idChallenge);
+            await addProof(bddConnection, dateProof, proofImg, description, accepted, challengerName, idHouse, idChallenge);
             //let newProof = await getHouseByName(bddConnection, title);/////////////////////////////////////////////
 
             return res.status(201).send({ message: 'Proof successfully added !' });
@@ -55,7 +60,7 @@ module.exports = {
 
         const { dateProof } = req.body;
         const { proofImg } = req.body;
-        const { proofDescription } = req.body;
+        const { description } = req.body;
         const { accepted } = req.body;
         const { challengerName } = req.body;
         const { idHouse } = req.body;
@@ -66,7 +71,7 @@ module.exports = {
         }
 
         try {
-            await updateProof(bddConnection, id, dateProof, proofImg, proofDescription, accepted, challengerName, idHouse, idChallenge);
+            await updateProof(bddConnection, id, dateProof, proofImg, description, accepted, challengerName, idHouse, idChallenge);
             let newProof = await getProofById(bddConnection, id);
 
             return res.status(200).send(newProof[0]);
