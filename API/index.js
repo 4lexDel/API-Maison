@@ -1,21 +1,45 @@
 const express = require('express');
-const app = express();
-
-const { getDatabaseConnection } = require('./initBDD');
-
+const bodyParser = require('body-parser');
+const multer = require("multer");
 var path = require('path');
-
 var cors = require('cors');
 const jwtUtils = require('./utils/jwt.utils');
+const { getDatabaseConnection } = require('./initBDD');
 
 const { getUserById } = require('./controllers/usersController');
-
 const { login, register, getUserProfile, changePassword } = require('./view/usersAuth');
 const { houseList, houseDetail, houseAddPoint, addHouse, updateHouse, deleteHouse } = require('./view/houseView');
 const { challengeList, challengeDetail, addChallenge, updateChallenge, deleteChallenge } = require('./view/challengeView');
 const { proofList, proofDetail, updateProof, addProof, deleteProof } = require('./view/proofView');
 
-const BDD_CONNECTOR = getDatabaseConnection(); //MYSQL CONNECTOR
+const app = express();
+
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+app.use('/proofs', express.static('upload/images'));
+app.use(express.json()); //Le body des request renvoient .json
+// app.use("/static", express.static(path.join(__dirname, 'public/static')));
+app.use(cors());
+
+
+/*----------------------------- storage engine -----------------------------*/
+const storage = multer.diskStorage({
+    destination: './upload/images',
+    filename: (req, file, cb) => {
+        return cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`);
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 10000000
+    }
+});
+
+/*---------------------------------------------------------------------------*/
+
+const BDD_CONNECTOR = getDatabaseConnection(); // MYSQL CONNECTOR
 
 const PORT = 5000;
 
@@ -26,14 +50,6 @@ app.listen(
         console.log(`Server started : ${PORT}`);
     }
 )
-
-app.use(express.json()); //Le body des request renvoient .json
-
-//app.use("/static", express.static(path.resolve(__dirname, "public", "static")));
-app.use("/static", express.static(path.join(__dirname, 'public/static')));
-
-app.use(cors());
-
 
 function authMid(req, res, next) { //This midleware check the token and share the userId return
     console.log("Auth mid");
@@ -60,9 +76,9 @@ async function adminCheckMid(req, res, next) {
 }
 
 
-app.get('/', (req, res) => {
-    res.sendFile(`${__dirname}/public/`);
-});
+// app.get('/', (req, res) => {
+//     res.sendFile(`${__dirname}/public/`);
+// });
 
 /** -------------------------------Authentification------------------------------------------ */
 
@@ -158,7 +174,7 @@ app.delete("/api/challenges/:id", authMid, adminCheckMid, async(req, res) => {
     deleteChallenge(req, res, BDD_CONNECTOR);
 });
 
-/**--------------------------------------------proof----------------------------------------------- */
+/**--------------------------------------------Proof----------------------------------------------- */
 app.get("/api/proofs", authMid, adminCheckMid, async(req, res) => {
     console.log("GET /api/proofs");
 
@@ -171,7 +187,7 @@ app.get("/api/proofs/:id", authMid, adminCheckMid, async(req, res) => {
     proofDetail(req, res, BDD_CONNECTOR);
 });
 
-app.post("/api/proofs", authMid, adminCheckMid, async(req, res) => {
+app.post("/api/proofs", upload.single('proofImg'), async(req, res) => {
     console.log("POST /api/proofs");
 
     addProof(req, res, BDD_CONNECTOR);

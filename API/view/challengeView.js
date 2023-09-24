@@ -25,7 +25,7 @@ module.exports = {
         }
     },
 
-    addChallenge: async function(req, res, bddConnection, ) {
+    addChallenge: async function(req, res, bddConnection) {
         const { title } = req.body;
         const { description } = req.body;
         const { expiration } = req.body;
