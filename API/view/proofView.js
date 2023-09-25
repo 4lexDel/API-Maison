@@ -111,7 +111,7 @@ module.exports = {
     deleteFile: function(fileName) {
         if (!fileName) return -1;
         // const filePath = path.join(__dirname, "..", "upload/images", fileName);
-        const filePath = path.join(__dirname, "..", "upload/images", fileName);
+        const filePath = path.join(__dirname, "..", process.env.STORAGE_PATH, fileName);
 
         // Vérifier si le fichier existe
         fs.access(filePath, fs.constants.F_OK, (err) => {

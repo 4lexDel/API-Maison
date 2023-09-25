@@ -1,7 +1,7 @@
 // Imports
 var jwt = require('jsonwebtoken');
 
-const JWT_SIGN_SECRET = 'azfc450zezyjk4504dsdfjvlz54sernbtlvb245zezcfzad';
+const JWT_SIGN_SECRET = process.env.JWT_SIGN_SECRET;
 
 // Exported functions
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
                 admin: userData.admin
             },
             JWT_SIGN_SECRET, {
-                expiresIn: '1h'
+                expiresIn: process.env.JWT_EXPIRATION
             })
     },
     parseAuthorization: function(authorization) {

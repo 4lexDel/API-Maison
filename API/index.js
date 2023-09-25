@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require("multer");
@@ -16,7 +17,7 @@ const app = express();
 
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
-app.use('/proofs', express.static('upload/images'));
+app.use('/proofs', express.static(process.env.STORAGE_PATH));
 app.use(express.json()); //Le body des request renvoient .json
 // app.use("/static", express.static(path.join(__dirname, 'public/static')));
 app.use(cors());
@@ -24,7 +25,7 @@ app.use(cors());
 
 /*----------------------------- storage engine -----------------------------*/
 const storage = multer.diskStorage({
-    destination: './upload/images',
+    destination: './' + process.env.STORAGE_PATH,
     filename: (req, file, cb) => {
         return cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`);
     }
@@ -33,7 +34,7 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 10000000
+        fileSize: process.env.FILE_SIZE_MAX
     }
 });
 
@@ -41,11 +42,11 @@ const upload = multer({
 
 const BDD_CONNECTOR = getDatabaseConnection(); // MYSQL CONNECTOR
 
-const PORT = 5000;
+const PORT = process.env.PORT;
 
 app.listen(
     PORT,
-    'localhost',
+    process.env.HOST,
     () => {
         console.log(`Server started : ${PORT}`);
     }
