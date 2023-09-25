@@ -34,3 +34,8 @@ Ajout de POO = plus clean
 -------------------------------------------------------------------------
 
 fichier .env pour stocker : le nom de domaine/clé de hachage/port.... et autres infos gloabale
+
+
+Idée Alex :
+- page report de ticket
+- système de vote pour les preuves 

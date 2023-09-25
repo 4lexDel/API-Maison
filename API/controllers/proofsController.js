@@ -2,7 +2,11 @@ module.exports = {
 
     getProofList: function(bddConnection) {
         return new Promise((resolve, reject) => {
-            bddConnection.query('SELECT * FROM proof order by dateProof asc', (err, rows) => {
+            bddConnection.query(`SELECT idProof, dateProof, proofImg, proof.description, challengerName, challenge.idChallenge, challenge.title challengeTitle, house.idHouse, house.title houseTitle
+                                FROM proof
+                                inner join challenge on challenge.idChallenge = proof.idChallenge
+                                inner join house on house.idHouse = proof.idHouse
+                                order by dateProof asc`, (err, rows) => {
                 if (err) {
                     console.error('Erreur lors de l\'exécution de la requête :', err);
                     reject();
