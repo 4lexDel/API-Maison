@@ -1,41 +1,6 @@
-API Stockant des maisons (Sairdaigle, Grifondor...)
-
-API Info [BACK] :
-(Pour chaque maison)
-- Nom : string
-- Points : int
-- Mission (OBJ : {Recompenses:int, success:boolean, timer:date}) [Notes CCTL]
-(idée) - Participants (OBJ : {mail, points})
-
-Routes :
-=> Increment de points
-=> Validation de mission
-=> Set les points
+DRY :
+- auth at the begining of app.get, app.post...etc
 
 
-[FRONT] :
-- Missions 
-- Visu du back
-- Ranking
-
--------------------------------------------------------------------
-
-Site BDE
-
-Friendly
-Style vitrine
-Page avec tous les liens
-
-
--------------------------------------------------------------------------
-Ajout de POO = plus clean
-
-
--------------------------------------------------------------------------
-
-fichier .env pour stocker : le nom de domaine/clé de hachage/port.... et autres infos gloabale
-
-
-Idée Alex :
-- page report de ticket
-- système de vote pour les preuves 
+ADMIN : 
+UPDATE ou DELETE compte et acces aux données

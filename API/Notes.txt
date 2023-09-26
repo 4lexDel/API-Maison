@@ -1,6 +1,0 @@
-DRY :
-- auth at the begining of app.get, app.post...etc
-
-
-ADMIN : 
-UPDATE ou DELETE compte et acces aux données
