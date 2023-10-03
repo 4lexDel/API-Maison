@@ -19,10 +19,13 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 app.use('/proofs', express.static(process.env.STORAGE_PATH));
 app.use(express.json()); //Le body des request renvoient .json
-// app.use("/static", express.static(path.join(__dirname, 'public/static')));
 app.use(cors());
 
-
+// app.use(cors({
+//     origin: 'http://front.com', // Remplacez par l'URL de votre frontend
+//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//     credentials: true, // Activez cette option si vous utilisez des cookies ou des sessions
+// }));
 /*----------------------------- storage engine -----------------------------*/
 const storage = multer.diskStorage({
     destination: './' + process.env.STORAGE_PATH,
@@ -42,7 +45,7 @@ const upload = multer({
 
 const BDD_CONNECTOR = getDatabaseConnection(); // MYSQL CONNECTOR
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 app.listen(
     PORT,
