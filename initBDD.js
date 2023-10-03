@@ -1,5 +1,5 @@
 // Importer le module mysql
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
 module.exports = {
     getDatabaseConnection: function() {
@@ -16,7 +16,8 @@ module.exports = {
         connection.connect((err) => {
             if (err) {
                 console.error('Erreur de connexion à la base de données :', err);
-                return -1;
+                throw err;
+                // return -1;
             }
             console.log('Connexion à la base de données établie avec succès !');
         })
