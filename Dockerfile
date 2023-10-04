@@ -5,4 +5,8 @@ COPY . .
 RUN npm install
 RUN npm uninstall bcrypt
 RUN npm install bcrypt
-ENTRYPOINT ["./entrypoint.sh"]
+
+# COPY ./entrypoint.sh .
+# RUN chmod +x entrypoint.sh
+CMD ["npm", "run", "start"]
+# ENTRYPOINT ["./entrypoint.sh"]
