@@ -17,7 +17,7 @@ const app = express();
 
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
-app.use('/proofs', express.static(process.env.STORAGE_PATH));
+app.use('/api/proofs-img', express.static(__dirname + process.env.STORAGE_PATH));
 app.use(express.json()); //Le body des request renvoient .json
 app.use(cors());
 
