@@ -15,11 +15,11 @@ const { proofList, proofDetail, updateProof, addProof, deleteProof } = require('
 
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 app.use('/api/proofs-img', express.static(__dirname + process.env.STORAGE_PATH));
 app.use(express.json()); //Le body des request renvoient .json
-app.use(cors());
 
 // app.use(cors({
 //     origin: 'http://front.com', // Remplacez par l'URL de votre frontend
