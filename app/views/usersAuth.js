@@ -1,6 +1,9 @@
 var bcrypt = require('bcrypt');
 const { getUsers, addUser, updateUser } = require('../controllers/usersController');
 var jwtUtils = require('../utils/jwt.utils');
+const { getDatabaseConnection } = require('../utils/initBDD');
+
+const bddConnection = getDatabaseConnection(); // MYSQL CONNECTOR
 //var asyncLib  = require('async');
 
 //const EMAIL_REGEX     = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -23,13 +26,9 @@ function isPasswordCorrect(password, cryptedPassword) {
     });
 }
 
-
-
-
 module.exports = {
-    register: async(req, res, bddConnection) => {
-        console.log("REGISTER FUNCTION");
-
+    register: async(req, res) => {
+        console.log("POST /api/register");
         // Params
         var { username } = req.body;
         var { password } = req.body;
@@ -83,9 +82,8 @@ module.exports = {
         // return res.status(500).json({ 'error': 'cannot add user' });
     },
 
-    login: async(req, res, bddConnection) => {
-        console.log("LOGIN FUNCTION");
-
+    login: async(req, res) => {
+        console.log("POST /api/login");
         // Params
         var { username } = req.body;
         var { password } = req.body;
@@ -119,7 +117,8 @@ module.exports = {
         //Erreur 500 de reserve ?????????
     },
 
-    getUserProfile: async(req, res, bddConnection) => {
+    getUserProfile: async(req, res) => {
+        console.log("TEST /api/test");
         // Getting auth header
         var headerAuth = req.headers['authorization'];
         console.log(`TEST TOKEN : ${headerAuth}`);
@@ -141,9 +140,8 @@ module.exports = {
         return res.status(500).json({ 'error': 'user not found' });
     },
 
-    changePassword: async(req, res, bddConnection) => {
-        console.log("UPDATE PASSWORD FUNCTION");
-
+    changePassword: async(req, res) => {
+        console.log("Change password /api/changePassword");
         // Params
         var { username } = req.body;
         var { password } = req.body;
@@ -194,7 +192,7 @@ module.exports = {
         }
     },
 
-    // deleteUser: async function(req, res, bddConnection, id) {
+    // deleteUser: async function(req, res, id) {
     //     try {
     //         await removeProofById(bddConnection, id);
 

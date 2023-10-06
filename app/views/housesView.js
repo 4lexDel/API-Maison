@@ -1,7 +1,11 @@
 const { getHouseList, getHouseById, addPointsByHouseId, getHouseByName, addHouse, updateHouse, removeHouseById } = require("../controllers/housesController");
+const { getDatabaseConnection } = require("../utils/initBDD");
+
+const bddConnection = getDatabaseConnection(); // MYSQL CONNECTOR
 
 module.exports = {
-    houseList: async function(req, res, bddConnection) {
+    houseList: async function(req, res) {
+        console.log("GET /api/houses");
         try {
             let houseList = await getHouseList(bddConnection);
 
@@ -12,7 +16,8 @@ module.exports = {
         }
     },
 
-    houseDetail: async function(req, res, bddConnection) {
+    houseDetail: async function(req, res) {
+        console.log("GET /api/house/:id");
         const { id } = req.params;
 
         try {
@@ -26,7 +31,8 @@ module.exports = {
 
     },
 
-    houseAddPoint: async function(req, res, bddConnection) {
+    houseAddPoint: async function(req, res) {
+        console.log("POST /api/houses/:id/add-points");
         const { id } = req.params;
 
         const { points } = req.body;
@@ -38,14 +44,15 @@ module.exports = {
         try {
             await addPointsByHouseId(bddConnection, id, points);
 
-            module.exports.houseDetail(req, res, bddConnection, id);
+            module.exports.houseDetail(req, res, id);
         } catch (error) {
             console.log(error);
             return res.status(500).send({ message: 'Internal error !' });
         }
     },
 
-    addHouse: async function(req, res, bddConnection) {
+    addHouse: async function(req, res) {
+        console.log("POST /api/houses");
         const { title } = req.body;
         const { score } = req.body;
         const { description } = req.body;
@@ -65,7 +72,8 @@ module.exports = {
         }
     },
 
-    updateHouse: async function(req, res, bddConnection) {
+    updateHouse: async function(req, res) {
+        console.log("PUT /api/houses/:id");
         const { id } = req.params;
 
         const { title } = req.body;
@@ -87,7 +95,8 @@ module.exports = {
         }
     },
 
-    deleteHouse: async function(req, res, bddConnection) {
+    deleteHouse: async function(req, res) {
+        console.log("DELETE /api/houses/:id");
         const { id } = req.params;
 
         try {

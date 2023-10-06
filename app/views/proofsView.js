@@ -3,9 +3,13 @@ const fs = require("fs");
 const path = require("path");
 
 const { getProofList, getProofById, addProof, updateProof, removeProofById } = require("../controllers/proofsController");
+const { getDatabaseConnection } = require('../utils/initBDD');
+
+const bddConnection = getDatabaseConnection(); // MYSQL CONNECTOR
 
 module.exports = {
-    proofList: async function(req, res, bddConnection) {
+    proofList: async function(req, res) {
+        console.log("GET /api/proofs");
         try {
             let proofList = await getProofList(bddConnection);
 
@@ -16,7 +20,8 @@ module.exports = {
         }
     },
 
-    proofDetail: async function(req, res, bddConnection) {
+    proofDetail: async function(req, res) {
+        console.log("GET /api/proofs/:id");
         const { id } = req.params;
 
         try {
@@ -29,7 +34,8 @@ module.exports = {
         }
     },
 
-    addProof: async function(req, res, bddConnection) {
+    addProof: async function(req, res) {
+        console.log("POST /api/proofs");
         let todayDate = DateTime.local();
 
         const dateProof = todayDate.toFormat('yyyy-MM-dd HH:mm:ss');
@@ -61,7 +67,8 @@ module.exports = {
         }
     },
 
-    updateProof: async function(req, res, bddConnection) {
+    updateProof: async function(req, res) {
+        console.log("PUT /api/proofs/:id");
         const { id } = req.params;
 
         const { dateProof } = req.body;
@@ -87,7 +94,8 @@ module.exports = {
         }
     },
 
-    deleteProof: async function(req, res, bddConnection) {
+    deleteProof: async function(req, res) {
+        console.log("DELETE /api/proofs/:id");
         const { id } = req.params;
 
         try {

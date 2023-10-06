@@ -1,7 +1,11 @@
 const { getChallengeList, getChallengeById, addChallenge, getChallengeByName, updateChallenge, removeChallengeById } = require("../controllers/challengesController");
+const { getDatabaseConnection } = require("../utils/initBDD");
+
+const bddConnection = getDatabaseConnection(); // MYSQL CONNECTOR
 
 module.exports = {
-    challengeList: async function(req, res, bddConnection) {
+    challengeList: async function(req, res) {
+        console.log("GET /api/challenges");
         try {
             let challengeList = await getChallengeList(bddConnection);
 
@@ -12,7 +16,8 @@ module.exports = {
         }
     },
 
-    challengeDetail: async function(req, res, bddConnection) {
+    challengeDetail: async function(req, res) {
+        console.log("GET /api/challenges/:id");
         const { id } = req.params;
 
         try {
@@ -25,7 +30,8 @@ module.exports = {
         }
     },
 
-    addChallenge: async function(req, res, bddConnection) {
+    addChallenge: async function(req, res) {
+        console.log("POST /api/challenges");
         const { title } = req.body;
         const { description } = req.body;
         const { expiration } = req.body;
@@ -47,7 +53,8 @@ module.exports = {
         }
     },
 
-    updateChallenge: async function(req, res, bddConnection) {
+    updateChallenge: async function(req, res) {
+        console.log("PUT /api/challenges/:id");
         const { id } = req.params;
 
         const { title } = req.body;
@@ -71,7 +78,8 @@ module.exports = {
         }
     },
 
-    deleteChallenge: async function(req, res, bddConnection) {
+    deleteChallenge: async function(req, res) {
+        console.log("DELETE /api/challenges/:id");
         const { id } = req.params;
 
         try {
