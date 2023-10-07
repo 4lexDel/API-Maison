@@ -8,7 +8,7 @@ const createRateLimiter = (windowMs, max) => {
         handler: (req, res, next) => {
             const cooldownRemaining = Math.ceil((req.rateLimit.resetTime - Date.now()) / 1000);
             res.status(429).send({
-                error: `Too many requests from this IP address, please try again in ${cooldownRemaining} seconds.`,
+                error: `Too many requests, please try again in ${cooldownRemaining} seconds.`,
             });
         },
     });

@@ -9,7 +9,7 @@ exports.authMid = (req, res, next) => { //This midleware check the token and sha
     var headerAuth = req.headers['authorization']; //Get the token
     var userId = jwtUtils.getUserId(headerAuth); //Check if it exist and get the userId
 
-    if (userId < 0) return res.status(400).json({ 'error': 'wrong token' });
+    if (userId < 0) return res.status(400).send({ 'error': 'wrong token' });
 
     req.auth = { userId };
 
@@ -23,7 +23,7 @@ exports.adminCheckMid = async(req, res, next) => {
     let userResponse = await getUserById(bddConnection, userId);
     let user = userResponse[0];
 
-    if (user.admin != 1) return res.status(403).json({ 'error': 'access forbidden' });
+    if (user.admin != 1) return res.status(403).send({ 'error': 'access forbidden' });
 
     next();
 }
