@@ -3,7 +3,8 @@ const fs = require("fs");
 const path = require("path");
 
 const { getProofList, getProofById, addProof, updateProof, removeProofById } = require("../controllers/proofsController");
-const { getChallengeById } = require("../controllers/challengesController");
+const { getChallengeById, achieveChallenge } = require("../controllers/challengesController");
+const { getHouseById, addPointsByHouseId } = require("../controllers/housesController");
 const { getDatabaseConnection } = require('../utils/initBDD');
 
 const bddConnection = getDatabaseConnection(); // MYSQL CONNECTOR
@@ -100,10 +101,9 @@ module.exports = {
         const { id } = req.params;
 
         try {
-            let proof = await getProofById(bddConnection, id);
-            console.log(proof[0]);
-            let fileToDelete = proof[0].proofImg;
-            console.log(fileToDelete);
+            let proof = (await getProofById(bddConnection, id))[0];
+
+            let fileToDelete = proof.proofImg;
             let deleteResult = module.exports.deleteFile(fileToDelete);
 
             if (deleteResult == -1) return res.status(500).send({ message: 'Internal error !' });
@@ -119,29 +119,85 @@ module.exports = {
 
     deleteFile: function(fileName) {
         if (!fileName) return -1;
-        // const filePath = path.join(__dirname, "..", "upload/images", fileName);
-        const filePath = path.join(__dirname, "..", process.env.STORAGE_PATH, fileName);
+        const filePath = path.join(__dirname, "..", "..", process.env.STORAGE_PATH, fileName);
 
-        // Vérifier si le fichier existe
         fs.access(filePath, fs.constants.F_OK, (err) => {
             if (err) {
-                // Le fichier n'existe pas, renvoyer une réponse d'erreur
                 console.log("File to delete does not exist");
                 return -1;
             }
-
-            // Le fichier existe, essayez de le supprimer
             fs.unlink(filePath, (err) => {
                 if (err) {
-                    // Erreur lors de la suppression du fichier, renvoyer une réponse d'erreur
                     console.log("Error impossible to delete the file");
                     return -1;
                 }
-
-                // Suppression réussie, renvoyer une réponse de succès
                 console.log("File successfully deleted");
                 return 1;
             });
         });
+    },
+
+    acceptProof: async function(req, res) {
+        console.log("POST /api/proofs/:id/accept");
+
+        const { id } = req.params;
+
+        try {
+            let proof = (await getProofById(bddConnection, id))[0];
+
+            /**----------- delete proof -------------- */
+            let fileToDelete = proof.proofImg;
+            let deleteResult = module.exports.deleteFile(fileToDelete);
+
+            if (deleteResult == -1) return res.status(500).send({ message: 'Internal error !' });
+
+            await removeProofById(bddConnection, id);
+            /**--------------------------------------- */
+
+            /**----------- select challenge ---------- */
+            let challenge = (await getChallengeById(bddConnection, proof.idChallenge))[0];
+            if (!challenge) return res.status(500).send({ message: 'Challenge dosn\'t exit !' });
+
+            let award = challenge.award;
+
+            /**----------- Achieve challenge --------- */
+            await achieveChallenge(bddConnection, proof.idChallenge);
+
+            /**----------- select house -------------- */
+            let house = (await getHouseById(bddConnection, proof.idHouse))[0];
+            if (!house) return res.status(500).send({ message: 'House dosn\'t exit !' });
+
+            /**----------- Earn award ---------------- */
+            await addPointsByHouseId(bddConnection, proof.idHouse, award);
+
+            return res.status(202).send({ message: 'Proof accepted !' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Internal error !' });
+        }
+    },
+
+    rejectProof: async function(req, res) {
+        console.log("POST /api/proofs/:id/reject");
+
+        const { id } = req.params;
+
+        try {
+            let proof = (await getProofById(bddConnection, id))[0];
+
+            /**----------- delete proof -------------- */
+            let fileToDelete = proof.proofImg;
+            let deleteResult = module.exports.deleteFile(fileToDelete);
+
+            if (deleteResult == -1) return res.status(500).send({ message: 'Internal error !' });
+
+            await removeProofById(bddConnection, id);
+            /**--------------------------------------- */
+
+            return res.status(202).send({ message: 'Proof rejected !' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Internal error !' });
+        }
     }
 }

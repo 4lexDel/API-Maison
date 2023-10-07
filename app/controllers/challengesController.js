@@ -64,6 +64,18 @@ module.exports = {
         });
     },
 
+    achieveChallenge: function(bddConnection, id) {
+        return new Promise(async(resolve, reject) => {
+            bddConnection.query(`UPDATE challenge set success = 1 where idChallenge = ${bddConnection.escape(id)}`, (err, rows) => {
+                if (err) {
+                    console.error('Erreur lors de l\'exécution de la requête :', err);
+                    reject();
+                }
+                resolve(rows);
+            });
+        });
+    },
+
     addChallenge: function(bddConnection, title, description, expiration, award, success) {
         return new Promise(async(resolve, reject) => {
             bddConnection.query(`INSERT into challenge (title, description, expiration, award, success) 
