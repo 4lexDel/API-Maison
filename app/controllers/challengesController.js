@@ -1,8 +1,19 @@
 module.exports = {
 
-    getChallengeList: function(bddConnection) {
+    getChallengeList: function(bddConnection, type = undefined) {
+        let filter = "";
+
+        switch (type) {
+            case "active":
+                filter = "WHERE success = 0";
+                break;
+            case "achieved":
+                filter = "WHERE success = 1";
+                break;
+        }
+
         return new Promise((resolve, reject) => {
-            bddConnection.query('SELECT * FROM challenge order by award desc', (err, rows) => {
+            bddConnection.query(`SELECT * FROM challenge ${filter} order by award desc`, (err, rows) => {
                 if (err) {
                     console.error('Erreur lors de l\'exécution de la requête :', err);
                     reject();

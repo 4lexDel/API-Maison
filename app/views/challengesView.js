@@ -6,8 +6,10 @@ const bddConnection = getDatabaseConnection(); // MYSQL CONNECTOR
 module.exports = {
     challengeList: async function(req, res) {
         console.log("GET /api/challenges");
+
+        const type = req.query.type;
         try {
-            let challengeList = await getChallengeList(bddConnection);
+            let challengeList = await getChallengeList(bddConnection, type);
 
             return res.status(200).send(challengeList);
         } catch (error) {
