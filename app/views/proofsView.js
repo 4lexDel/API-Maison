@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const { getProofList, getProofById, addProof, updateProof, removeProofById } = require("../controllers/proofsController");
+const { getChallengeById } = require("../controllers/challengesController");
 const { getDatabaseConnection } = require('../utils/initBDD');
 
 const bddConnection = getDatabaseConnection(); // MYSQL CONNECTOR
@@ -52,15 +53,15 @@ module.exports = {
             return res.status(418).send({ message: 'We need all the parameters !' });
         }
 
-        // const uint8Array = new Uint8Array(Object.keys(proofImg).map(key => proofImg[key]));
-        // const blob = new Blob([uint8Array], { type: 'image/png' });
-
         try {
+            let challenge = (await getChallengeById(bddConnection, idChallenge))[0];
+
+            if (!challenge || parseInt(challenge.success) == 1) return res.status(403).send({ 'error': 'Challenge already achieved !' });
+
             await addProof(bddConnection, dateProof, proofImg, description, accepted, challengerName, idHouse, idChallenge);
             //let newProof = await getHouseByName(bddConnection, title);/////////////////////////////////////////////
 
             return res.status(201).send({ message: 'Proof successfully added !', proofImg: `${proofImg}` });
-            // return res.status(201).send(newHouse[0]);
         } catch (error) {
             console.log(error);
             return res.status(500).send({ message: 'Internal error !' });
