@@ -53,16 +53,18 @@ module.exports = {
 
     addHouse: async function(req, res) {
         console.log("POST /api/houses");
+
+        const houseImg = req.file.filename;
         const { title } = req.body;
         const { score } = req.body;
         const { description } = req.body;
 
-        if (!title || (!score && score != 0) || !description) {
+        if (!title || !houseImg || (!score && score != 0) || !description) {
             return res.status(418).send({ message: 'We need all the parameters !' });
         }
 
         try {
-            await addHouse(bddConnection, title, score, description);
+            await addHouse(bddConnection, title, houseImg, score, description);
             let newHouse = await getHouseByName(bddConnection, title);
 
             return res.status(201).send(newHouse[0]);
@@ -76,16 +78,17 @@ module.exports = {
         console.log("PUT /api/houses/:id");
         const { id } = req.params;
 
+        const houseImg = req.file.filename;
         const { title } = req.body;
         const { score } = req.body;
         const { description } = req.body;
 
-        if (!title || (!score && score != 0) || !description) {
+        if (!title || !houseImg || (!score && score != 0) || !description) {
             return res.status(418).send({ message: 'We need all the parameters !' });
         }
 
         try {
-            await updateHouse(bddConnection, id, title, score, description);
+            await updateHouse(bddConnection, id, title, houseImg, score, description);
             let newHouse = await getHouseById(bddConnection, id);
 
             return res.status(200).send(newHouse[0]);

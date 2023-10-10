@@ -26,8 +26,8 @@ app.use('/api/houses', housesRoutes);
 app.use('/api/challenges', challengesRoutes);
 /**--------------------------------------------Proof---------------------------------------------------- */
 app.use('/api/proofs', proofsRoutes);
-app.use('/api/proofs-img', express.static(__dirname + process.env.STORAGE_PATH));
-/**----------------------------------------------------------------------------------------------------- */
+/**--------------------------------------------IMG------------------------------------------------------ */
+app.use('/api/img', express.static(__dirname + process.env.STORAGE_PATH));
 
 
 /**--------------------------------------------Start server--------------------------------------------- */

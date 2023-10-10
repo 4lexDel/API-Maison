@@ -48,9 +48,9 @@ module.exports = {
         });
     },
 
-    addHouse: function(bddConnection, title, score, description) {
+    addHouse: function(bddConnection, title, houseImg, score, description) {
         return new Promise(async(resolve, reject) => {
-            bddConnection.query(`INSERT into house (title, score, description) VALUES(${bddConnection.escape(title)}, ${bddConnection.escape(score)}, ${bddConnection.escape(description)})`, (err, rows) => {
+            bddConnection.query(`INSERT into house (title, houseImg, score, description) VALUES(${bddConnection.escape(title)}, ${bddConnection.escape(houseImg)}, ${bddConnection.escape(score)}, ${bddConnection.escape(description)})`, (err, rows) => {
                 if (err) {
                     console.error('Erreur lors de l\'exécution de la requête :', err);
                     reject();
@@ -60,9 +60,10 @@ module.exports = {
         });
     },
 
-    updateHouse: function(bddConnection, id, title, score, description) {
+    updateHouse: function(bddConnection, id, title, houseImg, score, description) {
         return new Promise(async(resolve, reject) => {
             bddConnection.query(`UPDATE house set title = ${bddConnection.escape(title)},
+                                                houseImg = ${bddConnection.escape(houseImg)},
                                                 score = ${bddConnection.escape(score)},
                                                 description = ${bddConnection.escape(description)}
                                     where idHouse = ${bddConnection.escape(id)}`, (err, rows) => {
